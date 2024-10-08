@@ -5,7 +5,7 @@ from train_model import train_model
 from forecasts import get_forecast_for_date
 
 
-def predict(date, area):
+def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
     # Load the model    
     model = train_model(area)
     # Get the precipitation data for the given date
@@ -31,7 +31,7 @@ def predict(date, area):
 
     return df
 
-def plot_predictions(df, date):
+def plot_predictions(df, date=dt.datetime.now() + dt.timedelta(days=1)):
     # Plot the predicted total minutes for each hour of the day
     plt.figure(figsize=(12, 6))
     plt.plot(df['hour'], df['total_minutes'], marker='o', label='Predicted Total Minutes', color='red')

@@ -7,6 +7,7 @@ from fmiopendata.wfs import download_stored_query
 
 
 def download_forecast(date, start_time, end_time, area):
+    print(f"\nDownloading forecast data for {area} on {date}")
     #convert to UTC
     start_time = start_time - timedelta(hours=3)
     end_time = end_time - timedelta(hours=3)
@@ -53,13 +54,11 @@ def download_forecast(date, start_time, end_time, area):
                                                 "endtime=" + end_time_str,
                                                 "bbox=" + bbox])
         latest_run = max(model_data.data.keys())
-        print(latest_run)
         data = model_data.data[latest_run]
         # This will download the data to a temporary file, parse the data and delete the file
         data.parse(delete=True)
 
         valid_times = data.data.keys()
-        print(list(valid_times))
 
         target_level = 10
         target_dataset_name = "surface precipitation amount, rain, convective"
@@ -70,7 +69,6 @@ def download_forecast(date, start_time, end_time, area):
                 unit = datasets[target_dataset_name]["units"]
                 data_array = datasets[target_dataset_name]["data"]  # Numpy array of the actual data
                 print(f"Time: {time_step}, Level: {target_level}, dataset name: {target_dataset_name}, data unit: {unit}")
-                print(data_array)
                 # Write out to a file named with the current time step
                 filename = f"{folder}/precipitation_data_{time_step.strftime('%Y%m%dT%H%M%S')}.csv"
                 np.savetxt(filename, data_array, delimiter=",")

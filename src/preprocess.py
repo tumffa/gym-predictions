@@ -144,9 +144,18 @@ def combine_data(hourly_data, weather_data):
     return training_dataframes
 
 def prepare_training_data():
+    print("Preparing training data...")
+
+    print("Processing hourly data...")
     hourly_data = process_hourly_data()
+
+    print("Processing weather data...")
     weather_data = process_weather_data()
+
+    print("Combining data...")
     dataframes = combine_data(hourly_data, weather_data)
+
+    print("Preprocessing done")
     return dataframes
 
 if __name__ == "__main__":
