@@ -44,7 +44,8 @@ const App = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Unknown error');
       }
 
       const data = await response.json();
@@ -52,6 +53,7 @@ const App = () => {
       const labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
       const usageMinutes = data.usage_minutes;
       const rainfall = data.precipitation;
+      const forecast_hours = Array.from({ length: 24 }, (_, i) => i); // Assuming all hours are forecasted
 
       const newEntry = {
         data: {
@@ -60,6 +62,7 @@ const App = () => {
           rainfall,
         },
         area: location,
+        forecast_hours,
       };
 
       console.log('New Entry:', newEntry); // Debugging log
@@ -67,7 +70,8 @@ const App = () => {
       setGraphEntries([newEntry]);
     } catch (error) {
       console.error('Error fetching data:', error);
-      alert('Failed to fetch data. Please try again later.');
+      alert(`Failed to fetch data: ${error.message}`);
+      setGraphEntries([]);
     } finally {
       setLoading(false);
     }
@@ -89,10 +93,11 @@ const App = () => {
         {loading ? (
           <div className="spinner-container">
             <div className="spinner"></div>
+            <div className="spinner-text">Downloading forecast...</div>
           </div>
         ) : (
           graphEntries.map((entry, index) => (
-            <Graph key={index} data={entry.data} legend={entry.legend} area={entry.area} style={{ width: '100%', maxWidth: '1200px' }} />
+            <Graph key={index} data={entry.data} area={entry.area} forecast_hours={entry.forecast_hours} style={{ width: '100%', maxWidth: '1200px' }} />
           ))
         )}
       </div>

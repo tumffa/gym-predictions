@@ -21,26 +21,18 @@ def download_forecast(date, start_time, end_time, area):
     }
     bbox = bounding_boxes[area]
 
-    # Create a folder to store the forecast data
-    if not os.path.exists(f"./forecasts/{area}"):
-        os.makedirs(f"./forecasts/{area}")
-
     # Extract the day, month, and year from the date
     day, month, year = date.day, date.month, date.year
-    # Create new folder or delete all previous /forecasts/DDMM files
+    # Create new folder
     folder = f"./forecasts/{area}/d{day:02d}m{month:02d}y{year}"
     if not os.path.exists(folder):
         os.makedirs(folder)
-    else:
-        for filename in os.listdir(folder):
-            file_path = os.path.join(folder, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    # Check how many hours have already been downloaded
+    downloaded_hours = len(os.listdir(f"./forecasts/{area}/d{date.day:02d}m{date.month:02d}y{date.year}"))
+    print(f"Downloaded hours: {downloaded_hours}")
+    start_time = start_time + timedelta(hours=downloaded_hours)
+
 
     # Iterate over each hour in the specified time range
     current_time = start_time
@@ -53,7 +45,12 @@ def download_forecast(date, start_time, end_time, area):
                                         args=["starttime=" + start_time_str,
                                                 "endtime=" + end_time_str,
                                                 "bbox=" + bbox])
-        latest_run = max(model_data.data.keys())
+        # Check if the download was successful
+        try:
+            latest_run = max(model_data.data.keys())
+        except Exception:
+            return
+        
         data = model_data.data[latest_run]
         # This will download the data to a temporary file, parse the data and delete the file
         data.parse(delete=True)
@@ -86,7 +83,8 @@ def precipitation_by_folder(folder):
     print(f"\nProcessing day: {folder}")
     # List all CSV files in the directory
     csv_files = glob.glob(os.path.join(folder, '*.csv'))
-
+    if len(csv_files) == 0:
+        return []
     # Initialize a dictionary to store precipitation data by hour
     hourly_data = {}
     # Iterate over each CSV file
@@ -135,5 +133,7 @@ def get_forecast_for_date(date, area):
     end_time = start_time + timedelta(days=1)
     # Check if the forecast data for the specified date exists
     if not os.path.exists(f"./forecasts/{area}/d{day:02d}m{month:02d}y{year}"):
+        download_forecast(date, start_time, end_time, area)
+    elif len(os.listdir(f"./forecasts/{area}/d{day:02d}m{month:02d}y{year}")) < 25:
         download_forecast(date, start_time, end_time, area)
     return precipitation_by_date(date, area)

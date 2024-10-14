@@ -12,11 +12,13 @@ def initialize_routes(app):
         if not date or not area:
             return jsonify({'error': 'Please provide both date and area'}), 400
         
-        df = predict(date, area)
+        df, forecast_hours = predict(date, area)
+        if forecast_hours < 24:
+            df['precipitation_mm'][forecast_hours:] = "NaN"
         # return precipitation and usage minutes as list
         return jsonify(
             {
                 'precipitation': df['precipitation_mm'].tolist(),
-                'usage_minutes': df['total_minutes'].tolist()
+                'usage_minutes': df['total_minutes'].tolist(),
             }
         )

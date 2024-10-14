@@ -13,7 +13,13 @@ def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
     model = train_model(area)
     # Get the precipitation data for the given date
     precipitation = get_forecast_for_date(date, area)
-    print(len(precipitation))
+    # Check if an error occurred
+    if type(precipitation) == str:
+        return precipitation
+    # Fill missing precipitation values with zeros
+    forecast_hours = len(precipitation)
+    if forecast_hours < 24:
+        precipitation.extend([0] * (24 - forecast_hours))
 
     # Create a DataFrame with 24 rows, each representing an hour of the day
     week_of_year = date.isocalendar()[1]
@@ -32,7 +38,7 @@ def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
     # Convert negative predictions to zero
     df['total_minutes'] = df['total_minutes'].clip(lower=0)
 
-    return df
+    return df, forecast_hours
 
 def plot_predictions(df, date=dt.datetime.now() + dt.timedelta(days=1)):
     # Plot the predicted total minutes for each hour of the day
