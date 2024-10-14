@@ -2,7 +2,7 @@
 
 This project predicts usage for outdoor gyms in Helsinki and Espoo.
 
-## Setup and usage
+## Backend
 
 Using poetry, install dependencies and activate virtual environment
 ```bash
@@ -12,14 +12,15 @@ poetry install
 poetry shell
 ```
 
-Run the predictions with default parameters (tomorrow in Paloheinä)
+Start the backend:
 ```bash
 python3 src/main.py
 ```
 
-## Web App
+## Frontend
 
-To run the web app you need to have Node.js installed: https://nodejs.org/en/download/package-manager
+
+To run the frontend you need to have Node.js installed: https://nodejs.org/en/download/package-manager
 
 Navigate to src/ui
 ```bash
