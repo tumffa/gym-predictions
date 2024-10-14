@@ -12,6 +12,8 @@ scikit-learn = "^1.5.2"
 eccodes = "^2.38.1"
 fmiopendata = "^0.4.3"
 matplotlib = "^3.9.2"
+flask = "^3.0.3"
+flask-cors = "^5.0.0"
 
 
 [build-system]

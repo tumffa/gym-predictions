@@ -24,7 +24,7 @@ const App = () => {
   const [graphEntries, setGraphEntries] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     if (isPastDate(date)) {
@@ -34,12 +34,24 @@ const App = () => {
 
     setLoading(true);
 
-    // Simulate data fetching
-    setTimeout(() => {
-      // Generate data for 24 hours
+    try {
+      const response = await fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ date, area: location }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+
       const labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
-      const usageMinutes = Array.from({ length: 24 }, () => Math.floor(Math.random() * 60));
-      const rainfall = Array.from({ length: 24 }, () => Math.random() * 10);
+      const usageMinutes = data.usage_minutes;
+      const rainfall = data.precipitation;
 
       const newEntry = {
         data: {
@@ -53,8 +65,12 @@ const App = () => {
       console.log('New Entry:', newEntry); // Debugging log
 
       setGraphEntries([newEntry]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      alert('Failed to fetch data. Please try again later.');
+    } finally {
       setLoading(false);
-    }, 2000); // Simulate a 2-second delay for data fetching
+    }
   };
 
   return (

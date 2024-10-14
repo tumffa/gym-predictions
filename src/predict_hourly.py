@@ -6,6 +6,9 @@ from forecasts import get_forecast_for_date
 
 
 def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
+    # Convert date str to datetime object
+    if isinstance(date, str):
+        date = dt.datetime.strptime(date, '%Y-%m-%d')
     # Load the model    
     model = train_model(area)
     # Get the precipitation data for the given date
