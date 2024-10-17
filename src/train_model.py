@@ -1,10 +1,21 @@
+import os
+import joblib
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 import pandas as pd
 
+def load_model(area):
+    if os.path.exists(f"./models/{area}_model.pkl"):
+        model = joblib.load(f"./models/{area}_model.pkl")
+    else:
+        model = train_model(area)
+        if not os.path.exists("./models"):
+            os.makedirs("./models")
+        joblib.dump(model, f"./models/{area}_model.pkl")
+    return model
 
-def train_model(area, degree=3):
+def train_model(area, degree=4):
     # Training data by gym area
     files = {
         "Paloheinä": "./processed_data/training_data_helsinkivantaa_weather.csv",

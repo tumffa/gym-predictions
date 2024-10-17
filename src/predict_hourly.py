@@ -1,16 +1,19 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dt
-from train_model import train_model
+from train_model import load_model
 from forecasts import get_forecast_for_date
 
+MODELS = {"Paloheinä": load_model("Paloheinä"),
+          "Pirkkola": load_model("Pirkkola"),
+          "Hietaniemi": load_model("Hietaniemi")
+          }
 
 def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
     # Convert date str to datetime object
     if isinstance(date, str):
         date = dt.datetime.strptime(date, '%Y-%m-%d')
     # Load the model    
-    model = train_model(area)
     # Get the precipitation data for the given date
     precipitation = get_forecast_for_date(date, area)
     # Check if an error occurred
@@ -33,7 +36,7 @@ def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
     })
 
     # Predict the total minutes for each hour of the day
-    df['total_minutes'] = model.predict(df[['week_of_year', 'hour', 'day_of_week', 'precipitation_mm']])
+    df['total_minutes'] = MODELS[area].predict(df[['week_of_year', 'hour', 'day_of_week', 'precipitation_mm']])
     
     # Convert negative predictions to zero
     df['total_minutes'] = df['total_minutes'].clip(lower=0)

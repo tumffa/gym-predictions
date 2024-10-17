@@ -1,21 +1,123 @@
 .spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-right: 20%; /* Adjust this value to move the spinner further to the right */
-  }
-  
-  .spinner {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-right: 20%; /* Adjust this value to move the spinner further to the right */
+}
+
+.spinner {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid rgb(109, 190, 191); /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+.spinner-text {
+  font-family: 'Arial', sans-serif; /* Set desired font */
+  font-size: 18px; /* Adjust font size */
+  font-weight: bold; /* Optional: Make the text bold */
+  color: #333; /* Adjust text color */
+  text-align: center; /* Center the text, if needed */
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+button {
+  background-color: rgb(109, 190, 191); /* Blue background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 10px 20px; /* Padding */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Inline element */
+  font-size: 16px; /* Font size */
+  margin: 4px 2px; /* Space around button */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 12px; /* Rounded corners */
+}
+
+select {
+  background-color: #f0f0f0; /* Light gray background */
+  color: #333; /* Darker text color */
+  font-family: Arial, sans-serif; /* Font family */
+  font-size: 16px; /* Font size */
+  padding: 10px 40px 10px 10px; /* Extra padding on the right for the arrow */
+  border-radius: 8px; /* Rounded corners */
+  border: none; /* Completely remove border */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  cursor: pointer; /* Pointer cursor */
+  outline: none !important; /* Remove any remaining outline */
+  position: relative; /* Positioning for the custom arrow */
+}
+
+select:focus {
+  outline: none !important; /* Remove outline on focus */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Keep the shadow, no focus outline */
+}
+
+label {
+  cursor: default;
+  font-family:Arial, sans-serif;
+}
+
+
+/* Style for the date input */
+input[type="date"] {
+  font-family: Arial, sans-serif; /* Change font to a more modern one */
+  font-size: 16px; /* Adjust font size for better readability */
+  padding: 10px; /* Add padding for better spacing */
+  border-radius: 8px; /* Rounded corners */
+  background-color: #f0f0f0; /* Light background color */
+  color: #333; /* Darker text color */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  cursor: default; /* Arrow cursor (default) */
+  outline: none !important; /* Remove outline on focus */
+  border: none; /* Remove any border that might act like an outline */
+  width: 175px; /* Full width */
+  appearance: none; /* Remove default appearance */
+}
+
+/* Style for the calendar picker icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: rgb(109, 190, 191); /* Blue background for calendar icon */
+  color: white; /* White calendar icon */
+  padding: 5px;
+  border-radius: 50%; /* Rounded calendar icon */
+  cursor: pointer; /* Pointer cursor on calendar icon */
+}
+
+/* Hover effect for the date input */
+input[type="date"]:hover {
+  background-color: #e6e6e6; /* Slightly darker background on hover */
+}
+
+/* Focus effect for the date input */
+input[type="date"]:focus {
+  outline: none !important; /* Ensure no outline on focus */
+  border: none; /* Remove any potential border that could show on focus */
+  box-shadow: 0px 0px 8px rgba(52, 152, 219, 0.4); /* Blue shadow when focused */
+}
+body {
+  background-image: url('../../assets/pirkkola.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.graph-container {
+  width: 120%; /* Adjust the width as needed */
+  height: 700px; /* Adjust the height as needed */
+  margin: 0 auto; /* Center the graph */
+  position: relative;
+}

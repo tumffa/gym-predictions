@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from predict_hourly import predict
+import predict_hourly as ph
 
 # Route for predictions based on input data
 def initialize_routes(app):
@@ -12,7 +12,7 @@ def initialize_routes(app):
         if not date or not area:
             return jsonify({'error': 'Please provide both date and area'}), 400
         
-        df, forecast_hours = predict(date, area)
+        df, forecast_hours = ph.predict(date, area)
         if forecast_hours < 24:
             df['precipitation_mm'][forecast_hours:] = "NaN"
         # return precipitation and usage minutes as list

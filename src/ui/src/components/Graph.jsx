@@ -1,6 +1,23 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { Chart } from 'chart.js';
+
+// Custom plugin to set the background color to a slightly transparent white
+const transparentWhiteBackgroundPlugin = {
+  id: 'transparentWhiteBackgroundPlugin',
+  beforeDraw: (chart) => {
+    const ctx = chart.ctx;
+    const { top, left, width, height } = chart.chartArea;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // Slightly transparent white
+    ctx.fillRect(left, top, width, height);
+    ctx.restore();
+  },
+};
+
+Chart.register(transparentWhiteBackgroundPlugin);
 
 const Graph = ({ data, area, style }) => {
   // Find the index of the first NaN value in the rainfall data
@@ -63,17 +80,23 @@ const Graph = ({ data, area, style }) => {
         display: true,
         text: `Predicted usage and rainfall in ${area}`,
         font: {
-          size: 48,
+          size: 50,
         },
       },
+      legend: {
+        labels: {
+          font: {
+            size: 20, // Increase the legend text size
+          },
+        },
+      },
+      transparentWhiteBackgroundPlugin: {}, // Enable the custom plugin
     },
   };
 
-  console.log('Chart Data:', chartData); // Debugging log
-
   return (
-    <div style={{ ...style, position: 'relative', height: '800px', width: '1200px' }}>
-      <Line data={chartData} options={options} />
+    <div className="graph-container">
+      <Line data={chartData} options={options} style={style} />
     </div>
   );
 };
