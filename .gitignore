@@ -2,3 +2,5 @@
 /forecasts
 **__pycache__**
 *node_modules*
+src/ui/build
+.github/
