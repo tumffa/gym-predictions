@@ -2,6 +2,8 @@
 
 This project predicts usage for outdoor gyms in Helsinki and Espoo.
 
+[Visit in fly.io](https://gym-predictions.fly.dev/)
+
 ## Backend
 
 Using poetry, install dependencies and activate virtual environment
