@@ -1,39 +1,33 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
-import { Chart } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-// Custom plugin to set the background color to a slightly transparent white
-const transparentWhiteBackgroundPlugin = {
-  id: 'transparentWhiteBackgroundPlugin',
-  beforeDraw: (chart) => {
-    const ctx = chart.ctx;
-    const { top, left, width, height } = chart.chartArea;
+// Register the necessary components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-    ctx.save();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // Slightly transparent white
-    ctx.fillRect(left, top, width, height);
-    ctx.restore();
-  },
-};
+const Graph = ({ data, area, validEndIndex, style }) => {
+  // Multiply rainfall data by 10
+  const multipliedRainfall = data.rainfall.map(value => value * 10);
 
-Chart.register(transparentWhiteBackgroundPlugin);
-
-const Graph = ({ data, area, style }) => {
-  // Find the index of the first NaN value in the rainfall data
-  const firstNaNIndex = data.rainfall.findIndex(value => isNaN(value));
-
-  // If there are no NaN values, set firstNaNIndex to the length of the data
-  const validEndIndex = firstNaNIndex === -1 ? data.rainfall.length : firstNaNIndex;
-
-  // Filter the data up to the first NaN index
-  const filteredLabels = data.labels.slice(0, validEndIndex);
-  const filteredUsageMinutes = data.usageMinutes.slice(0, validEndIndex);
-  const filteredRainfall = data.rainfall.slice(0, validEndIndex);
-
-  // Create missing forecast data starting from the first NaN index
-  const missingForecastLabels = data.labels.slice(validEndIndex);
-  const missingForecastData = data.rainfall.slice(validEndIndex).map(() => 0);
+  // Identify the indices of NaN values in the rainfall data
+  const missingForecastData = data.rainfall.map((value, index) => isNaN(value) ? index : null).filter(index => index !== null);
 
   const datasets = [
     {
@@ -44,8 +38,8 @@ const Graph = ({ data, area, style }) => {
       borderColor: 'rgba(75,192,192,1)',
     },
     {
-      label: `Rainfall`,
-      data: filteredRainfall,
+      label: `Rainfall in mm (x10)`,
+      data: multipliedRainfall,
       fill: false,
       backgroundColor: 'rgba(153,102,255,0.4)',
       borderColor: 'rgba(153,102,255,1)',
@@ -56,7 +50,7 @@ const Graph = ({ data, area, style }) => {
   if (missingForecastData.length > 0) {
     datasets.push({
       label: `Missing Forecast`,
-      data: Array(validEndIndex).fill(null).concat(missingForecastData),
+      data: missingForecastData.map(index => ({ x: index, y: 0 })),
       fill: false,
       backgroundColor: 'rgba(255,0,0,0.4)',
       borderColor: 'rgba(255,0,0,1)',
@@ -91,6 +85,12 @@ const Graph = ({ data, area, style }) => {
         },
       },
       transparentWhiteBackgroundPlugin: {}, // Enable the custom plugin
+    },
+    scales: {
+      x: {
+        type: 'category',
+        labels: data.labels,
+      },
     },
   };
 

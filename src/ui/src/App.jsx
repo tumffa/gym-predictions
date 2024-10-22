@@ -14,7 +14,9 @@ const getNextDayDate = () => {
 // Function to check if a date is in the past
 const isPastDate = (date) => {
   const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset today's time to midnight
   const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0); // Reset selected date's time to midnight
   return selectedDate < today;
 };
 
@@ -26,14 +28,14 @@ const App = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-    if (isPastDate(date)) {
-      alert('Date must be today or later.');
-      return;
-    }
-
+  
+    // if (isPastDate(date)) {
+    //   alert('Date must be today or later.');
+    //   return;
+    // }
+  
     setLoading(true);
-
+  
     try {
       const response = await fetch('/predict', {
         method: 'POST',
@@ -42,19 +44,24 @@ const App = () => {
         },
         body: JSON.stringify({ date, area: location }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Unknown error');
       }
-
-      const data = await response.json();
-
+  
+      const responseText = await response.text();
+      if (!responseText) {
+        throw new Error('Empty response from server');
+      }
+  
+      const data = JSON.parse(responseText);
+  
       const labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
       const usageMinutes = data.usage_minutes;
       const rainfall = data.precipitation;
       const forecast_hours = Array.from({ length: 24 }, (_, i) => i); // Assuming all hours are forecasted
-
+  
       const newEntry = {
         data: {
           labels,
@@ -64,9 +71,9 @@ const App = () => {
         area: location,
         forecast_hours,
       };
-
+  
       console.log('New Entry:', newEntry); // Debugging log
-
+  
       setGraphEntries([newEntry]);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -97,7 +104,7 @@ const App = () => {
           </div>
         ) : (
           graphEntries.map((entry, index) => (
-            <Graph key={index} data={entry.data} area={entry.area} forecast_hours={entry.forecast_hours} style={{ width: '100%', maxWidth: '1200px' }} />
+            <Graph key={index} data={entry.data} area={entry.area} style={{ width: '100%', maxWidth: '1200px' }} />
           ))
         )}
       </div>

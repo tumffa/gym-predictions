@@ -105,7 +105,7 @@ input[type="date"]:focus {
   box-shadow: 0px 0px 8px rgba(52, 152, 219, 0.4); /* Blue shadow when focused */
 }
 body {
-  background-image: url('../../assets/pirkkola.jpg');
+  background-image: url('../assets/pirkkola.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

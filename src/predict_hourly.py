@@ -13,16 +13,14 @@ def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
     # Convert date str to datetime object
     if isinstance(date, str):
         date = dt.datetime.strptime(date, '%Y-%m-%d')
-    # Load the model    
+    
     # Get the precipitation data for the given date
     precipitation = get_forecast_for_date(date, area)
+    print(f"Length of precipitation data: {len(precipitation)}")
+    
     # Check if an error occurred
-    if type(precipitation) == str:
+    if isinstance(precipitation, str):
         return precipitation
-    # Fill missing precipitation values with zeros
-    forecast_hours = len(precipitation)
-    if forecast_hours < 24:
-        precipitation.extend([0] * (24 - forecast_hours))
 
     # Create a DataFrame with 24 rows, each representing an hour of the day
     week_of_year = date.isocalendar()[1]
@@ -35,13 +33,17 @@ def predict(date=dt.datetime.now() + dt.timedelta(days=1), area="Paloheinä"):
         'precipitation_mm': precipitation
     })
 
+    # Create a copy of the DataFrame for prediction, replacing string "NaN" with 0
+    df_for_prediction = df.copy()
+    df_for_prediction['precipitation_mm'] = df_for_prediction['precipitation_mm'].replace("NaN", 0)
+
     # Predict the total minutes for each hour of the day
-    df['total_minutes'] = MODELS[area].predict(df[['week_of_year', 'hour', 'day_of_week', 'precipitation_mm']])
+    df['total_minutes'] = MODELS[area].predict(df_for_prediction[['week_of_year', 'hour', 'day_of_week', 'precipitation_mm']])
     
     # Convert negative predictions to zero
     df['total_minutes'] = df['total_minutes'].clip(lower=0)
 
-    return df, forecast_hours
+    return df
 
 def plot_predictions(df, date=dt.datetime.now() + dt.timedelta(days=1)):
     # Plot the predicted total minutes for each hour of the day

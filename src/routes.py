@@ -1,8 +1,16 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_from_directory
 import predict_hourly as ph
 
 # Route for predictions based on input data
 def initialize_routes(app):
+    @app.route('/')
+    def serve_index():
+        return send_from_directory(app.static_folder, 'index.html')
+    
+    @app.route('/<path:path>')
+    def serve_static(path):
+        return send_from_directory(app.static_folder, path)
+    
     @app.route('/predict', methods=['POST'])
     def predict_usage():
         data = request.json
@@ -12,9 +20,7 @@ def initialize_routes(app):
         if not date or not area:
             return jsonify({'error': 'Please provide both date and area'}), 400
         
-        df, forecast_hours = ph.predict(date, area)
-        if forecast_hours < 24:
-            df['precipitation_mm'][forecast_hours:] = "NaN"
+        df = ph.predict(date, area)
         # return precipitation and usage minutes as list
         return jsonify(
             {
