@@ -1,7 +1,0 @@
-/processed_data
-/forecasts
-**__pycache__**
-*node_modules*
-src/ui/build
-.github/
-fly.toml
